@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { updateDocumentStatus } from "@/lib/actions/documents";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { DOCUMENT_TYPES } from "@/lib/constants/document-types";
@@ -50,28 +50,10 @@ export function DocumentReviewList({ documents }: Props) {
     rejectionReason?: string
   ) => {
     startTransition(async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const result = await updateDocumentStatus(docId, status, rejectionReason);
 
-      const updateData: Record<string, unknown> = {
-        status,
-        reviewed_by: user?.id,
-        reviewed_at: new Date().toISOString(),
-      };
-
-      if (rejectionReason) {
-        updateData.rejection_reason = rejectionReason;
-      }
-
-      const { error } = await supabase
-        .from("application_documents")
-        .update(updateData)
-        .eq("id", docId);
-
-      if (error) {
-        toast.error(error.message);
+      if (result.error) {
+        toast.error(result.error);
       } else {
         toast.success(`Document ${status === "approved" ? "approved" : "rejected"}`);
         setRejectingId(null);

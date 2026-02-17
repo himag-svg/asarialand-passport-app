@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useSupabase } from "@/components/providers/supabase-provider";
+import { registerDocumentUpload } from "@/lib/actions/documents";
 import { toast } from "sonner";
 import type { DocumentTypeInfo } from "@/lib/constants/document-types";
 import type { ApplicationDocument } from "@/types";
@@ -70,33 +71,25 @@ export function DocumentUploadCard({
       try {
         const filePath = `${applicationId}/${documentType.type}/${file.name}`;
 
+        // Upload file to Supabase Storage (client-side)
         const { error: uploadError } = await supabase.storage
           .from("application-documents")
           .upload(filePath, file, { upsert: true });
 
         if (uploadError) throw uploadError;
 
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        // Register document metadata via server action (bypasses RLS)
+        const result = await registerDocumentUpload({
+          applicationId,
+          documentType: documentType.type,
+          fileName: file.name,
+          filePath,
+          fileSize: file.size,
+          mimeType: file.type,
+          requiresReturn: documentType.requiresReturn,
+        });
 
-        const { error: insertError } = await supabase
-          .from("application_documents")
-          .insert({
-            application_id: applicationId,
-            document_type: documentType.type,
-            file_name: file.name,
-            file_path: filePath,
-            file_size: file.size,
-            mime_type: file.type,
-            status: "uploaded",
-            is_certified: false,
-            is_translated: false,
-            requires_return: documentType.requiresReturn,
-            uploaded_by: user?.id,
-          });
-
-        if (insertError) throw insertError;
+        if (result.error) throw new Error(result.error);
 
         toast.success(`${documentType.name} uploaded successfully`);
       } catch (err) {

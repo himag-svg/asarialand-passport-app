@@ -87,10 +87,10 @@ export async function createRequest(formData: FormData) {
 /** Statuses that allow the client to cancel */
 const CANCELLABLE_STATUSES = [
   "client_request",
-  "pending_kyc",
-  "kyc_in_review",
-  "pending_payment",
-  "documents_required",
+  "kyc_review",
+  "invoice_sent",
+  "payment_pending",
+  "document_collection",
 ];
 
 export async function cancelApplication(applicationId: string) {

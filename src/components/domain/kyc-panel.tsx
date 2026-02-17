@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { updateKycStatus } from "@/lib/actions/documents";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import type { Application, KycStatus } from "@/types";
 import { ShieldCheck, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 
@@ -30,32 +31,28 @@ export function KycPanel({ application }: Props) {
   );
   const [kycNotes, setKycNotes] = useState(application.kyc_notes ?? "");
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const config = kycStatusConfig[kycStatus];
   const StatusIcon = config.icon;
 
   const handleSave = () => {
     startTransition(async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const result = await updateKycStatus({
+        applicationId: application.id,
+        kycStatus,
+        kycNotes,
+      });
 
-      const { error } = await supabase
-        .from("applications")
-        .update({
-          kyc_status: kycStatus,
-          kyc_notes: kycNotes,
-          kyc_completed_at:
-            kycStatus !== "pending" ? new Date().toISOString() : null,
-          kyc_completed_by: kycStatus !== "pending" ? user?.id : null,
-        })
-        .eq("id", application.id);
-
-      if (error) {
-        toast.error(error.message);
+      if (result.error) {
+        toast.error(result.error);
       } else {
-        toast.success("KYC status updated");
+        toast.success(
+          kycStatus === "clear"
+            ? "KYC approved — application advanced to Invoice Sent"
+            : "KYC status updated"
+        );
+        router.refresh();
       }
     });
   };

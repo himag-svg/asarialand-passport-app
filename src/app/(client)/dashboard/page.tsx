@@ -17,10 +17,10 @@ import type { ApplicationStatus } from "@/types";
 
 const CANCELLABLE_STATUSES = [
   "client_request",
-  "pending_kyc",
-  "kyc_in_review",
-  "pending_payment",
-  "documents_required",
+  "kyc_review",
+  "invoice_sent",
+  "payment_pending",
+  "document_collection",
 ];
 
 export default async function ClientDashboardPage() {
