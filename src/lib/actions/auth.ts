@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -15,6 +16,46 @@ const SignInSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+/** Service-role client that bypasses RLS — only for server actions */
+function createServiceClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return [];
+        },
+        setAll() {},
+      },
+    }
+  );
+}
+
+/** Ensure a profile row exists for the given user */
+async function ensureProfile(
+  userId: string,
+  email: string,
+  fullName: string,
+  role: string = "client"
+) {
+  const admin = createServiceClient();
+  const { data: existing } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("id", userId)
+    .single();
+
+  if (!existing) {
+    await admin.from("profiles").insert({
+      id: userId,
+      email,
+      full_name: fullName,
+      role,
+    });
+  }
+}
+
 export async function signUp(formData: FormData) {
   const raw = {
     email: formData.get("email") as string,
@@ -28,7 +69,7 @@ export async function signUp(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: result.data.email,
     password: result.data.password,
     options: {
@@ -41,6 +82,16 @@ export async function signUp(formData: FormData) {
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Create profile row directly (in case DB trigger doesn't exist)
+  if (data.user) {
+    await ensureProfile(
+      data.user.id,
+      result.data.email,
+      result.data.fullName,
+      "client"
+    );
   }
 
   redirect("/dashboard");
@@ -73,7 +124,12 @@ export async function signIn(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (user) {
-    const { data: profile } = await supabase
+    // Auto-create profile if missing (handles users created before trigger)
+    const fullName = (user.user_metadata?.full_name as string) || "";
+    await ensureProfile(user.id, user.email ?? "", fullName, "client");
+
+    const admin = createServiceClient();
+    const { data: profile } = await admin
       .from("profiles")
       .select("role")
       .eq("id", user.id)
