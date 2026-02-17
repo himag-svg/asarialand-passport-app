@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getClientApplications } from "@/lib/queries/requests";
 import { StatusBadge } from "@/components/domain/status-badge";
 import { StatusTimeline } from "@/components/domain/status-timeline";
+import { CancelApplicationButton } from "@/components/domain/cancel-application-button";
 import { getServiceTypeInfo } from "@/lib/constants/service-types";
 import {
   PlusCircle,
@@ -13,6 +14,14 @@ import {
   Waves,
 } from "lucide-react";
 import type { ApplicationStatus } from "@/types";
+
+const CANCELLABLE_STATUSES = [
+  "client_request",
+  "pending_kyc",
+  "kyc_in_review",
+  "pending_payment",
+  "documents_required",
+];
 
 export default async function ClientDashboardPage() {
   const applications = await getClientApplications();
@@ -157,6 +166,11 @@ export default async function ClientDashboardPage() {
               </Link>
             </div>
           </div>
+
+          {/* Cancel button — only for early-stage applications */}
+          {CANCELLABLE_STATUSES.includes(latest.status) && (
+            <CancelApplicationButton applicationId={latest.id} />
+          )}
         </div>
       </div>
 

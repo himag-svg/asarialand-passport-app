@@ -84,6 +84,59 @@ export async function createRequest(formData: FormData) {
   redirect(`/request/${data.id}`);
 }
 
+/** Statuses that allow the client to cancel */
+const CANCELLABLE_STATUSES = [
+  "client_request",
+  "pending_kyc",
+  "kyc_in_review",
+  "pending_payment",
+  "documents_required",
+];
+
+export async function cancelApplication(applicationId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "You must be logged in" };
+
+  // Verify ownership and status
+  const { data: app } = await supabase
+    .from("applications")
+    .select("id, client_id, status")
+    .eq("id", applicationId)
+    .single();
+
+  if (!app) return { error: "Application not found" };
+  if (app.client_id !== user.id) return { error: "Unauthorized" };
+  if (!CANCELLABLE_STATUSES.includes(app.status)) {
+    return { error: "This application can no longer be cancelled" };
+  }
+
+  const { error } = await supabase
+    .from("applications")
+    .update({ status: "cancelled" })
+    .eq("id", applicationId);
+
+  if (error) return { error: error.message };
+
+  // Audit log
+  await supabase.from("audit_log").insert({
+    user_id: user.id,
+    action: "application.cancel",
+    resource_type: "application",
+    resource_id: applicationId,
+    new_values: { status: "cancelled", cancelled_by: "client" },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/admin/requests");
+  revalidatePath("/admin/dashboard");
+
+  return { success: true };
+}
+
 export async function updateApplicationStatus(
   applicationId: string,
   newStatus: string,
