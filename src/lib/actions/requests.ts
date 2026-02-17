@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -47,7 +48,10 @@ export async function createRequest(formData: FormData) {
   const seq = String(Date.now()).slice(-4);
   const referenceNumber = `DM-${year}-${seq}`;
 
-  const { data, error } = await supabase
+  // Use admin client to bypass RLS for insert
+  const admin = createAdminClient();
+
+  const { data, error } = await admin
     .from("applications")
     .insert({
       reference_number: referenceNumber,
@@ -72,7 +76,7 @@ export async function createRequest(formData: FormData) {
   }
 
   // Log to audit trail
-  await supabase.from("audit_log").insert({
+  await admin.from("audit_log").insert({
     user_id: user.id,
     action: "application.create",
     resource_type: "application",
@@ -101,8 +105,11 @@ export async function cancelApplication(applicationId: string) {
 
   if (!user) return { error: "You must be logged in" };
 
+  // Use admin client for DB operations (bypasses RLS)
+  const admin = createAdminClient();
+
   // Verify ownership and status
-  const { data: app } = await supabase
+  const { data: app } = await admin
     .from("applications")
     .select("id, client_id, status")
     .eq("id", applicationId)
@@ -114,7 +121,7 @@ export async function cancelApplication(applicationId: string) {
     return { error: "This application can no longer be cancelled" };
   }
 
-  const { error } = await supabase
+  const { error } = await admin
     .from("applications")
     .update({ status: "cancelled" })
     .eq("id", applicationId);
@@ -122,7 +129,7 @@ export async function cancelApplication(applicationId: string) {
   if (error) return { error: error.message };
 
   // Audit log
-  await supabase.from("audit_log").insert({
+  await admin.from("audit_log").insert({
     user_id: user.id,
     action: "application.cancel",
     resource_type: "application",
@@ -149,7 +156,10 @@ export async function updateApplicationStatus(
 
   if (!user) return { error: "Unauthorized" };
 
-  const { error } = await supabase
+  // Use admin client to bypass RLS
+  const admin = createAdminClient();
+
+  const { error } = await admin
     .from("applications")
     .update({ status: newStatus })
     .eq("id", applicationId);
@@ -157,7 +167,7 @@ export async function updateApplicationStatus(
   if (error) return { error: error.message };
 
   // Audit log
-  await supabase.from("audit_log").insert({
+  await admin.from("audit_log").insert({
     user_id: user.id,
     action: "application.status_change",
     resource_type: "application",
@@ -168,6 +178,7 @@ export async function updateApplicationStatus(
   revalidatePath(`/admin/requests/${applicationId}`);
   revalidatePath("/admin/requests");
   revalidatePath("/admin/dashboard");
+  revalidatePath("/dashboard");
 
   return { success: true };
 }
