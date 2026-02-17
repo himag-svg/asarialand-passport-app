@@ -53,7 +53,7 @@ export default function NewRequestPage() {
                   name="serviceType"
                   value={svc.type}
                   required
-                  className="mt-1 h-4 w-4 accent-[#6c63ff]"
+                  className="mt-1 h-4 w-4 accent-accent"
                   defaultChecked={svc.type === "normal"}
                 />
                 <div className="flex-1">

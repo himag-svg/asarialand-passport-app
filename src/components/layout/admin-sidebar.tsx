@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Shield,
+  Anchor,
 } from "lucide-react";
 
 const navItems = [
@@ -25,14 +26,14 @@ const navItems = [
 function BrandLogo() {
   return (
     <div className="flex items-center gap-3">
-      <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-gold/20 bg-gold/5">
-        <Shield className="h-4.5 w-4.5 text-gold" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-gold/20 bg-gradient-to-br from-gold/10 to-gold/5 shadow-gold-glow">
+        <Shield className="h-5 w-5 text-gold" />
       </div>
       <div>
         <p className="font-display text-sm font-bold text-white leading-tight">
           Asarialand
         </p>
-        <p className="text-[10px] text-slate-500">Admin Portal</p>
+        <p className="text-[10px] text-gold">Admin Portal</p>
       </div>
     </div>
   );
@@ -44,7 +45,10 @@ export function AdminSidebar() {
 
   const navContent = (
     <>
-      <div className="section-label mb-3 mt-8">Administration</div>
+      <div className="section-label mb-3 mt-8 flex items-center gap-1.5">
+        <Anchor className="h-3 w-3" />
+        Administration
+      </div>
       <nav className="flex flex-col gap-0.5">
         {navItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
@@ -55,8 +59,8 @@ export function AdminSidebar() {
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-150 ${
                 isActive
-                  ? "bg-accent/10 font-medium text-accent shadow-glow"
-                  : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-300"
+                  ? "bg-accent/10 font-medium text-accent shadow-glow border border-accent/10"
+                  : "text-slate-500 hover:bg-white/[0.04] hover:text-slate-300 border border-transparent"
               }`}
             >
               <item.icon className={`h-4 w-4 ${isActive ? "text-accent" : ""}`} />
@@ -65,6 +69,18 @@ export function AdminSidebar() {
           );
         })}
       </nav>
+
+      {/* Admin info card at bottom */}
+      <div className="mt-auto pt-6">
+        <div className="rounded-xl border border-gold/10 bg-gradient-to-br from-gold/5 to-gold-dark/5 p-3">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-gold">
+            Staff Access
+          </p>
+          <p className="mt-1 text-[10px] text-slate-600 leading-relaxed">
+            Processing &amp; administration controls for passport services.
+          </p>
+        </div>
+      </div>
     </>
   );
 

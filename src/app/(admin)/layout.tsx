@@ -16,9 +16,13 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen">
       <AdminSidebar />
-      <div className="flex flex-1 flex-col min-w-0">
+      <div className="flex flex-1 flex-col min-w-0 relative">
+        {/* Subtle tropical ambient glow */}
+        <div className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-gold/[0.02] blur-[150px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 h-[300px] w-[300px] rounded-full bg-accent/[0.02] blur-[100px] pointer-events-none" />
+
         <Header user={user} />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="relative flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

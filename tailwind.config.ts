@@ -11,23 +11,23 @@ const config: Config = {
     extend: {
       colors: {
         surface: {
-          50: "#f8f9fc",
-          100: "#eef1f8",
-          200: "#d8deec",
-          300: "#b3bed5",
-          400: "#8596b4",
-          500: "#657899",
-          600: "#4f5f7d",
-          700: "#404d66",
-          800: "#2a3140",
-          900: "#181d27",
-          950: "#0d1117",
+          50: "#faf9f7",
+          100: "#f0ede8",
+          200: "#ddd8cf",
+          300: "#c4bdb0",
+          400: "#a69b8a",
+          500: "#8d8070",
+          600: "#736659",
+          700: "#5a4f43",
+          800: "#1e1b16",
+          900: "#151310",
+          950: "#0c0b09",
         },
         accent: {
-          DEFAULT: "#6c63ff",
-          muted: "#2d2a5e",
-          hover: "#5a52e0",
-          light: "#8b85ff",
+          DEFAULT: "#0ea5e9",
+          muted: "#0c4a6e",
+          hover: "#0284c7",
+          light: "#38bdf8",
         },
         gold: {
           DEFAULT: "#d4a853",
@@ -35,10 +35,23 @@ const config: Config = {
           dark: "#b08a3a",
           muted: "#3d3424",
         },
+        ocean: {
+          400: "#2dd4bf",
+          500: "#14b8a6",
+          600: "#0d9488",
+        },
+        coral: {
+          DEFAULT: "#f97316",
+          light: "#fb923c",
+        },
+        palm: {
+          DEFAULT: "#22c55e",
+          light: "#4ade80",
+        },
         brand: {
-          navy: "#0f1628",
-          deep: "#111827",
-          slate: "#1e2536",
+          navy: "#0c1220",
+          deep: "#0f1628",
+          slate: "#1a2332",
         },
       },
       fontFamily: {
@@ -50,20 +63,24 @@ const config: Config = {
         card: "0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2)",
         "card-hover":
           "0 8px 25px -5px rgb(0 0 0 / 0.3), 0 4px 10px -6px rgb(0 0 0 / 0.2)",
-        glow: "0 0 20px rgba(108, 99, 255, 0.15)",
+        glow: "0 0 20px rgba(14, 165, 233, 0.15)",
         "gold-glow": "0 0 30px rgba(212, 168, 83, 0.12)",
+        "ocean-glow": "0 0 30px rgba(14, 165, 233, 0.1)",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "hero-pattern":
-          "linear-gradient(135deg, #0f1628 0%, #111827 50%, #1a1f33 100%)",
+          "linear-gradient(135deg, #0c1220 0%, #0f1628 40%, #0d2137 100%)",
+        "tropical-gradient":
+          "linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(20, 184, 166, 0.04) 50%, rgba(34, 197, 94, 0.02) 100%)",
       },
       animation: {
-        "fade-in": "fadeIn 0.5s ease-out forwards",
-        "slide-up": "slideUp 0.5s ease-out forwards",
+        "fade-in": "fadeIn 0.6s ease-out forwards",
+        "slide-up": "slideUp 0.6s ease-out forwards",
         "slide-in-right": "slideInRight 0.3s ease-out forwards",
-        shimmer: "shimmer 2s linear infinite",
+        shimmer: "shimmer 3s linear infinite",
         float: "float 6s ease-in-out infinite",
+        wave: "wave 8s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -71,7 +88,7 @@ const config: Config = {
           "100%": { opacity: "1" },
         },
         slideUp: {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         slideInRight: {
@@ -84,7 +101,13 @@ const config: Config = {
         },
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-6px)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        wave: {
+          "0%, 100%": { transform: "translateX(0) translateY(0)" },
+          "25%": { transform: "translateX(5px) translateY(-3px)" },
+          "50%": { transform: "translateX(0) translateY(-6px)" },
+          "75%": { transform: "translateX(-5px) translateY(-3px)" },
         },
       },
     },

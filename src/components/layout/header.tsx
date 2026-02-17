@@ -1,6 +1,6 @@
 import { signOut } from "@/lib/actions/auth";
 import type { Profile } from "@/types";
-import { LogOut, CircleUser } from "lucide-react";
+import { LogOut, CircleUser, Waves } from "lucide-react";
 
 export function Header({ user }: { user: Profile }) {
   const isStaff = user.role !== "client";
@@ -8,6 +8,7 @@ export function Header({ user }: { user: Profile }) {
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-white/[0.06] bg-surface-950/80 pl-12 pr-4 sm:px-6 lg:pl-6 backdrop-blur-xl">
       <div className="flex items-center gap-2">
+        <Waves className="h-3.5 w-3.5 text-ocean-400" />
         <span className="text-xs font-medium text-slate-600">
           {isStaff ? "Admin Portal" : "Client Portal"}
         </span>
@@ -15,7 +16,7 @@ export function Header({ user }: { user: Profile }) {
 
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent/10">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-accent/20 to-ocean-400/20 border border-accent/10">
             <CircleUser className="h-4 w-4 text-accent" />
           </div>
           <span className="hidden sm:inline text-sm text-slate-400">

@@ -9,6 +9,7 @@ import {
   Loader,
   CheckCircle2,
   ArrowRight,
+  Waves,
 } from "lucide-react";
 
 export default async function AdminDashboardPage() {
@@ -25,7 +26,7 @@ export default async function AdminDashboardPage() {
       value: stats.total,
       icon: FileStack,
       color: "text-accent-light",
-      bg: "bg-accent/10",
+      bg: "bg-gradient-to-br from-accent/15 to-ocean-400/10",
       border: "border-accent/10",
     },
     {
@@ -33,7 +34,7 @@ export default async function AdminDashboardPage() {
       value: stats.pending_kyc,
       icon: ShieldCheck,
       color: "text-amber-400",
-      bg: "bg-amber-400/10",
+      bg: "bg-gradient-to-br from-amber-400/15 to-amber-500/10",
       border: "border-amber-400/10",
     },
     {
@@ -41,36 +42,39 @@ export default async function AdminDashboardPage() {
       value: stats.pending_payment,
       icon: CreditCard,
       color: "text-orange-400",
-      bg: "bg-orange-400/10",
+      bg: "bg-gradient-to-br from-orange-400/15 to-coral/10",
       border: "border-orange-400/10",
     },
     {
       label: "In Progress",
       value: stats.in_progress,
       icon: Loader,
-      color: "text-violet-400",
-      bg: "bg-violet-400/10",
-      border: "border-violet-400/10",
+      color: "text-ocean-400",
+      bg: "bg-gradient-to-br from-ocean-400/15 to-accent/10",
+      border: "border-ocean-400/10",
     },
     {
       label: "Completed",
       value: stats.completed,
       icon: CheckCircle2,
       color: "text-emerald-400",
-      bg: "bg-emerald-400/10",
+      bg: "bg-gradient-to-br from-emerald-400/15 to-palm/10",
       border: "border-emerald-400/10",
     },
   ];
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="font-display text-xl font-bold text-white">
-          Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Asarialand Passport Renewal Pipeline
-        </p>
+      <div className="flex items-center gap-3">
+        <div>
+          <h1 className="font-display text-xl font-bold text-white">
+            Dashboard
+          </h1>
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-600">
+            <Waves className="h-3.5 w-3.5 text-ocean-400" />
+            Asarialand Passport Renewal Pipeline
+          </p>
+        </div>
       </div>
 
       {/* Metric cards */}
@@ -78,7 +82,7 @@ export default async function AdminDashboardPage() {
         {cards.map((card) => (
           <div
             key={card.label}
-            className={`glass-card p-4 border ${card.border}`}
+            className={`glass-card p-4 border ${card.border} transition-all duration-200 hover:border-white/[0.1]`}
           >
             <div className="flex items-center gap-3">
               <div

@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Clock,
   Shield,
+  Waves,
 } from "lucide-react";
 import type { ApplicationStatus } from "@/types";
 
@@ -21,17 +22,40 @@ export default async function ClientDashboardPage() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="max-w-md text-center animate-fade-in">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-gold/20 bg-gold/5 shadow-gold-glow">
-            <Shield className="h-10 w-10 text-gold" />
+          {/* Hero welcome card */}
+          <div className="relative mb-8 overflow-hidden rounded-3xl border border-white/[0.06] bg-gradient-to-br from-brand-deep to-brand-navy p-8">
+            {/* Background image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-20"
+              style={{
+                backgroundImage:
+                  'url("https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?auto=format&fit=crop&w=1200&q=80")',
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/60 to-transparent" />
+
+            <div className="relative z-10">
+              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-gold/30 bg-gold/10 shadow-gold-glow">
+                <Shield className="h-10 w-10 text-gold" />
+              </div>
+
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Waves className="h-3.5 w-3.5 text-ocean-400" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ocean-400">
+                  Official Portal
+                </span>
+              </div>
+
+              <h1 className="font-display text-2xl font-bold text-white">
+                Welcome to Asarialand
+              </h1>
+              <p className="mt-2 text-base text-white/60">
+                Passport Services Portal
+              </p>
+            </div>
           </div>
 
-          <h1 className="font-display text-2xl font-bold text-white">
-            Welcome to Asarialand
-          </h1>
-          <p className="mt-2 text-base text-slate-500">
-            Passport Services Portal
-          </p>
-          <p className="mt-4 text-sm text-slate-600 leading-relaxed">
+          <p className="text-sm text-slate-600 leading-relaxed">
             Begin your passport renewal application. Our streamlined digital
             process guides you through every step.
           </p>
@@ -91,7 +115,7 @@ export default async function ClientDashboardPage() {
           <div className="glass-card p-5">
             <div className="section-label">Estimated Completion</div>
             <div className="mt-3 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400/15 to-coral/10 border border-amber-400/10">
                 <Clock className="h-5 w-5 text-amber-400" />
               </div>
               <p className="font-display text-xl font-bold text-white">
@@ -113,7 +137,7 @@ export default async function ClientDashboardPage() {
             <div className="mt-3 space-y-2">
               <Link
                 href="/documents"
-                className="flex items-center justify-between rounded-xl border border-white/[0.06] px-3 py-2.5 text-sm text-slate-400 transition hover:border-white/[0.1] hover:bg-white/[0.03] hover:text-white"
+                className="flex items-center justify-between rounded-xl border border-white/[0.06] px-3 py-2.5 text-sm text-slate-400 transition hover:border-accent/20 hover:bg-accent/5 hover:text-white"
               >
                 <span className="flex items-center gap-2">
                   <Upload className="h-4 w-4" />
@@ -123,7 +147,7 @@ export default async function ClientDashboardPage() {
               </Link>
               <Link
                 href="/payments"
-                className="flex items-center justify-between rounded-xl border border-white/[0.06] px-3 py-2.5 text-sm text-slate-400 transition hover:border-white/[0.1] hover:bg-white/[0.03] hover:text-white"
+                className="flex items-center justify-between rounded-xl border border-white/[0.06] px-3 py-2.5 text-sm text-slate-400 transition hover:border-accent/20 hover:bg-accent/5 hover:text-white"
               >
                 <span className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4" />

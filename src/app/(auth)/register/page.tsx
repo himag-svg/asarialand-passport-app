@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { signUp } from "@/lib/actions/auth";
-import { UserPlus, Mail, Lock, User, ArrowLeft } from "lucide-react";
+import { UserPlus, Mail, Lock, User, ArrowLeft, Waves } from "lucide-react";
 
 export default function RegisterPage() {
   const [state, formAction, isPending] = useActionState(
@@ -17,6 +17,9 @@ export default function RegisterPage() {
   return (
     <div className="w-full max-w-sm animate-fade-in">
       <div className="text-center">
+        <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-ocean-400/10">
+          <Waves className="h-5 w-5 text-ocean-400" />
+        </div>
         <h2 className="font-display text-2xl font-bold text-white">
           Create your account
         </h2>
@@ -46,7 +49,7 @@ export default function RegisterPage() {
               name="fullName"
               type="text"
               required
-              className="block w-full rounded-xl border border-white/[0.08] bg-white/[0.03] py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 transition-all duration-200 focus:border-accent/50 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-accent/10"
+              className="input-focus block w-full rounded-xl py-3 pl-10 pr-4 text-sm"
               placeholder="Your full legal name"
             />
           </div>
@@ -66,7 +69,7 @@ export default function RegisterPage() {
               name="email"
               type="email"
               required
-              className="block w-full rounded-xl border border-white/[0.08] bg-white/[0.03] py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 transition-all duration-200 focus:border-accent/50 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-accent/10"
+              className="input-focus block w-full rounded-xl py-3 pl-10 pr-4 text-sm"
               placeholder="you@example.com"
             />
           </div>
@@ -87,7 +90,7 @@ export default function RegisterPage() {
               type="password"
               required
               minLength={8}
-              className="block w-full rounded-xl border border-white/[0.08] bg-white/[0.03] py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600 transition-all duration-200 focus:border-accent/50 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-accent/10"
+              className="input-focus block w-full rounded-xl py-3 pl-10 pr-4 text-sm"
               placeholder="Minimum 8 characters"
             />
           </div>
