@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { createServerClient } from "@supabase/ssr";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -16,30 +16,14 @@ const SignInSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-/** Service-role client that bypasses RLS — only for server actions */
-function createServiceClient() {
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return [];
-        },
-        setAll() {},
-      },
-    }
-  );
-}
-
-/** Ensure a profile row exists for the given user */
+/** Ensure a profile row exists for the given user (bypasses RLS) */
 async function ensureProfile(
   userId: string,
   email: string,
   fullName: string,
   role: string = "client"
 ) {
-  const admin = createServiceClient();
+  const admin = createAdminClient();
   const { data: existing } = await admin
     .from("profiles")
     .select("id")
@@ -47,12 +31,15 @@ async function ensureProfile(
     .single();
 
   if (!existing) {
-    await admin.from("profiles").insert({
+    const { error } = await admin.from("profiles").insert({
       id: userId,
       email,
       full_name: fullName,
       role,
     });
+    if (error) {
+      console.error("Failed to create profile:", error);
+    }
   }
 }
 
@@ -84,7 +71,7 @@ export async function signUp(formData: FormData) {
     return { error: error.message };
   }
 
-  // Create profile row directly (in case DB trigger doesn't exist)
+  // Create profile row directly (bypasses RLS via service role)
   if (data.user) {
     await ensureProfile(
       data.user.id,
@@ -124,11 +111,11 @@ export async function signIn(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (user) {
-    // Auto-create profile if missing (handles users created before trigger)
+    // Auto-create profile if missing (handles users created before fix)
     const fullName = (user.user_metadata?.full_name as string) || "";
     await ensureProfile(user.id, user.email ?? "", fullName, "client");
 
-    const admin = createServiceClient();
+    const admin = createAdminClient();
     const { data: profile } = await admin
       .from("profiles")
       .select("role")
